@@ -1,7 +1,7 @@
 package com.ll.sb231127.domain.member.member.service;
 
-import com.ll.sb231127.domain.member.member.entity.Member;
 import com.ll.sb231127.domain.member.member.repository.MemberRepository;
+import com.ll.sb231127.domain.member.member.entity.Member;
 import com.ll.sb231127.global.rsData.RsData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
