@@ -1,0 +1,4 @@
+DROP DATABASE IF EXISTS sb_23_11_27_dev;
+CREATE DATABASE sb_23_11_27_dev;
+USE sb_23_11_27_dev;
+    
