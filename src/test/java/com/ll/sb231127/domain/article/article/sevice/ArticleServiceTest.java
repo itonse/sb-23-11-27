@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,5 +60,16 @@ public class ArticleServiceTest {
         articleService.modify(article, "수정된 제목", "수정된 내용");
 
         assertThat(article.getTitle()).isEqualTo("수정된 제목");
+    }
+
+    @DisplayName("1번 글의 댓글들을 수정한다.")
+    @Test
+    @Rollback(false)
+    void t5() {
+        Article article = articleService.findById(1L).get();
+
+        article.getComments().forEach(comment -> {
+            articleService.modifyComment(comment, comment.getBody() + "!!");
+        });
     }
 }
