@@ -2,8 +2,8 @@ package com.ll.sb231127.domain.article.article.sevice;
 
 import com.ll.sb231127.domain.article.article.entity.Article;
 import com.ll.sb231127.domain.article.article.service.ArticleService;
+import com.ll.sb231127.domain.article.articleComment.entity.ArticleComment;
 import com.ll.sb231127.domain.member.member.entity.Member;
-import com.ll.sb231127.domain.member.member.service.MemberService;
 import com.ll.sb231127.global.rsData.RsData;
 import com.ll.sb231127.standard.util.Ut;
 import org.junit.jupiter.api.DisplayName;
@@ -22,8 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ArticleServiceTest {
     @Autowired
     private ArticleService articleService;
-    @Autowired
-    private MemberService memberService;
 
     @DisplayName("글 쓰기")
     @Test
@@ -64,12 +62,23 @@ public class ArticleServiceTest {
 
     @DisplayName("1번 글의 댓글들을 수정한다.")
     @Test
-    @Rollback(false)
+    @Rollback(false)  // 테스트DB에서 확인하기 위해 붙임
     void t5() {
         Article article = articleService.findById(1L).get();
 
         article.getComments().forEach(comment -> {
             articleService.modifyComment(comment, comment.getBody() + "!!");
         });
+    }
+
+    @DisplayName("1번 글의 댓글 중 마지막 것을 삭제한다.")
+    @Test
+    @Rollback(false)  // 테스트DB에서 확인하기 위해 붙임
+    void t6() {
+        Article article = articleService.findById(1L).get();
+
+        ArticleComment lastComment = article.getComments().getLast();
+
+        article.getComments().remove(lastComment);  // JPA 가 연결을 끊어서 고아 객체가 된다
     }
 }

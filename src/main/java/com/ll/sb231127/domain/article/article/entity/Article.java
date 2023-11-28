@@ -30,7 +30,7 @@ public class Article extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member author;
 
-    @OneToMany(mappedBy = "article", cascade = ALL)
+    @OneToMany(mappedBy = "article", cascade = ALL, orphanRemoval = true)   // orphanRemoval: JPA에서 연결이 끊긴 고아 객체들은 DB에서 삭제하도록 한다.
     @Builder.Default   // 빌더 사용 시 필드의 기본값 유지 (원래 null이 기본값)
     private List<ArticleComment> comments = new ArrayList<>();
 
@@ -42,5 +42,9 @@ public class Article extends BaseEntity {
                 .build();
 
         comments.add(comment);
+    }
+
+    public void removeComment(ArticleComment comment) {
+        comments.remove(comment);
     }
 }
