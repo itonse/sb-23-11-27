@@ -1,9 +1,10 @@
-package com.ll.sb231127.domain.article.article.sevice;
+package com.ll.sb231127.domain.article.article.service;
 
 import com.ll.sb231127.domain.article.article.entity.Article;
-import com.ll.sb231127.domain.article.article.service.ArticleService;
 import com.ll.sb231127.domain.article.articleComment.entity.ArticleComment;
+import com.ll.sb231127.domain.article.articleComment.service.ArticleCommentService;
 import com.ll.sb231127.domain.member.member.entity.Member;
+import com.ll.sb231127.domain.member.member.service.MemberService;
 import com.ll.sb231127.global.rsData.RsData;
 import com.ll.sb231127.standard.util.Ut;
 import org.junit.jupiter.api.DisplayName;
@@ -22,6 +23,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ArticleServiceTest {
     @Autowired
     private ArticleService articleService;
+    @Autowired
+    private MemberService memberService;
+    @Autowired
+    private ArticleCommentService articleCommentService;
 
     @DisplayName("글 쓰기")
     @Test
@@ -39,7 +44,7 @@ public class ArticleServiceTest {
         assertThat(article.getTitle()).isEqualTo("제목1");
     }
 
-    @DisplayName("1번 글의 작성자의 username이 user1 이다.")
+    @DisplayName("1번 글의 작성자의 username 은 user1 이다.")
     @Test
     void t3() {
         Article article = articleService.findById(1L).get();
@@ -57,28 +62,34 @@ public class ArticleServiceTest {
 
         articleService.modify(article, "수정된 제목", "수정된 내용");
 
-        assertThat(article.getTitle()).isEqualTo("수정된 제목");
+        Article article_ = articleService.findById(1L).get();
+
+        assertThat(article_.getTitle()).isEqualTo("수정된 제목");
+    }
+
+    @DisplayName("2번 글에 댓글들을 추가한다.")
+    @Test
+    @Rollback(false)
+    void t5() {
+        Member member1 = memberService.findById(1L).get();
+        Article article2 = articleService.findById(2L).get();
+
+        articleCommentService.write(member1, article2, "댓글1");
     }
 
     @DisplayName("1번 글의 댓글들을 수정한다.")
     @Test
-    @Rollback(false)  // 테스트DB에서 확인하기 위해 붙임
-    void t5() {
-        Article article = articleService.findById(1L).get();
+    void t6() {
+        ArticleComment comment = articleCommentService.findLatest().get();
 
-        article.getComments().forEach(comment -> {
-            articleService.modifyComment(comment, comment.getBody() + "!!");
-        });
+        articleCommentService.modify(comment, "new body");
     }
 
     @DisplayName("1번 글의 댓글 중 마지막 것을 삭제한다.")
     @Test
-    @Rollback(false)  // 테스트DB에서 확인하기 위해 붙임
-    void t6() {
-        Article article = articleService.findById(1L).get();
+    void t7() {
+        ArticleComment comment = articleCommentService.findFirstByArticleIdOrderByIdDesc(1L).get();
 
-        ArticleComment lastComment = article.getComments().getLast();
-
-        article.getComments().remove(lastComment);  // JPA 가 연결을 끊어서 고아 객체가 된다
+        articleCommentService.delete(comment);
     }
 }
