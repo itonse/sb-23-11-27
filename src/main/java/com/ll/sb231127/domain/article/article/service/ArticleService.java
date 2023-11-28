@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleService {
     private final ArticleRepository articleRepository;
 
+    @Transactional
     public RsData<Article> write(long authorId, String title, String body) {
         Article article = Article.builder()
                 .authorId(authorId)
@@ -22,6 +23,7 @@ public class ArticleService {
 
         articleRepository.save(article);
 
-        return RsData.of("200", "%d번 게시글이 작성되었습니다".formatted(article.getId()), article);
+        return RsData.of("200", "%d번 게시글이 작성되었습니다."
+                .formatted(article.getId()), article);
     }
 }
