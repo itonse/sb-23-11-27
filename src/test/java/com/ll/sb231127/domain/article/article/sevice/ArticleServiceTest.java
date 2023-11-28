@@ -5,6 +5,7 @@ import com.ll.sb231127.domain.article.article.service.ArticleService;
 import com.ll.sb231127.domain.member.member.entity.Member;
 import com.ll.sb231127.domain.member.member.service.MemberService;
 import com.ll.sb231127.global.rsData.RsData;
+import com.ll.sb231127.standard.util.Ut;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +47,17 @@ public class ArticleServiceTest {
         Member author = article.getAuthor();
 
         assertThat(author.getUsername()).isEqualTo("user1");
+    }
+
+    @DisplayName("1번 글의 제목을 수정한다.")
+    @Test
+    void t4() {
+        Article article = articleService.findById(1L).get();
+
+        Ut.thread.sleep(1000);
+
+        articleService.modify(article, "수정된 제목", "수정된 내용");
+
+        assertThat(article.getTitle()).isEqualTo("수정된 제목");
     }
 }
