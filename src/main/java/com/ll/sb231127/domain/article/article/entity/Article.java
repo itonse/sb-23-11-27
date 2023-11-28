@@ -1,4 +1,4 @@
-package com.ll.sb231127.domain.member.member.entity;
+package com.ll.sb231127.domain.article.article.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,11 +15,12 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class Member {
+public class Article {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @EqualsAndHashCode.Include
     private Long id;
-    private String username;
-    private String password;
+    private String title;
+    private String body;
+    private Long authorId;
 }

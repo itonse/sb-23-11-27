@@ -1,7 +1,6 @@
-package com.ll.sb231127;
+package com.ll.sb231127.domain.member.member.service;
 
 import com.ll.sb231127.domain.member.member.entity.Member;
-import com.ll.sb231127.domain.member.member.service.MemberService;
 import com.ll.sb231127.global.rsData.RsData;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
