@@ -1,8 +1,10 @@
 package com.ll.sb231127.domain.article.article.entity;
 
+import com.ll.sb231127.domain.member.member.entity.Member;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import lombok.*;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -22,5 +24,7 @@ public class Article {
     private Long id;
     private String title;
     private String body;
-    private Long authorId;
+
+    @ManyToOne
+    private Member author;
 }
