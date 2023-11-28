@@ -32,9 +32,16 @@ public class ArticleServiceTest {
         assertThat(article.getId()).isGreaterThan(0L);
     }
 
-    @DisplayName("1번 글의 작성자의 username이 user1 이다.")
+    @DisplayName("1번 글을 가져온다.")
     @Test
     void t2() {
+        Article article = articleService.findById(1L).get();
+        assertThat(article.getTitle()).isEqualTo("제목1");
+    }
+
+    @DisplayName("1번 글의 작성자의 username이 user1 이다.")
+    @Test
+    void t3() {
         Article article = articleService.findById(1L).get();
         Member author = article.getAuthor();
 

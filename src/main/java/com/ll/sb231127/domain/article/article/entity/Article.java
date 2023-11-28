@@ -1,10 +1,7 @@
 package com.ll.sb231127.domain.article.article.entity;
 
 import com.ll.sb231127.domain.member.member.entity.Member;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -25,6 +22,6 @@ public class Article {
     private String title;
     private String body;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member author;
 }
