@@ -2,6 +2,7 @@ package com.ll.sb231127.domain.article.articleTag.entity;
 
 
 import com.ll.sb231127.domain.article.article.entity.Article;
+import com.ll.sb231127.domain.member.member.entity.Member;
 import com.ll.sb231127.global.jpa.baseEntity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
@@ -19,7 +20,10 @@ import static lombok.AccessLevel.PROTECTED;
 @Getter
 @ToString(callSuper = true)
 public class ArticleTag extends BaseEntity {
+    private String content;
+
     @ManyToOne(fetch = LAZY)
     private Article article; // article_id
-    private String content;
+    @ManyToOne(fetch = LAZY)
+    private Member author;
 }
