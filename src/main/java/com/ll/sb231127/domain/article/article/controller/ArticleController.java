@@ -43,10 +43,9 @@ public class ArticleController {
                         kwType -> true
                 ));
 
-        log.debug("kwTypesMap: {}", kwTypesMap);
-
         Page<Article> itemsPage = articleService.search(pageable);
         model.addAttribute("itemsPage", itemsPage);
+        model.addAttribute("kwTypesMap", kwTypesMap);
 
         return "article/list";
     }
