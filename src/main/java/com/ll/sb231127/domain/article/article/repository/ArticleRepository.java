@@ -10,10 +10,13 @@ import java.util.List;
 public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findByOrderByIdDesc();
 
+    Page<Article> findByAuthor_usernameContainingOrTitleContainingOrBodyContaining(String kw, String kw_, String kw__, Pageable pageable);
+
     Page<Article> findByTitleContainingOrBodyContaining(String kw, String kw_, Pageable pageable);
 
     Page<Article> findByTitleContaining(String kw, Pageable pageable);
 
     Page<Article> findByBodyContaining(String kw, Pageable pageable);
 
+    Page<Article> findByAuthor_usernameContaining(String kw, Pageable pageable);
 }
