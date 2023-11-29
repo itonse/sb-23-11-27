@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.stream.IntStream;
+
 @Profile("!prod")
 @Configuration
 @RequiredArgsConstructor
@@ -36,6 +38,7 @@ public class NotProd {
 
         Member member1 = memberService.join("user1", "1234").getData();
         Member member2 = memberService.join("user2", "1234").getData();
+        Member member3 = memberService.join("user4", "1234").getData();
 
         Article article1 = articleService.write(member1.getId(), "제목1", "내용1").getData();
         Article article2 = articleService.write(member1.getId(), "제목2", "내용2").getData();
@@ -50,8 +53,27 @@ public class NotProd {
         article2.addComment(member1, "댓글4");
         article2.addComment(member1, "댓글5");
 
+        article3.addComment(member1, "댓글6");
+        article3.addComment(member1, "댓글7");
+
+        article3.addComment(member1, "댓글8");
+        article3.addComment(member1, "댓글9");
+        article3.addComment(member1, "댓글10");
+        article3.addComment(member1, "댓글11");
+        article3.addComment(member1, "댓글12");
+
         article1.addTag("자바");
         article1.addTag("백엔드");
         article2.addTag("프레임워크", "스프링부트");
+
+        article4.addTag("자바", "스프링부트");
+
+        IntStream.rangeClosed(5, 120).forEach(
+                i -> {
+                    String title = "제목" + i;
+                    String body = "내용" + i;
+                    articleService.write(member2.getId(), title, body);
+                }
+        );
     }
 }
