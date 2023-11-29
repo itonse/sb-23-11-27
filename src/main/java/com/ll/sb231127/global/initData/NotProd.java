@@ -47,8 +47,13 @@ public class NotProd {
     public void work2() {
         Member member1 = memberService.findById(1L).get();
         Article article1 = articleService.findById(1L).get();
+        Article article2 = articleService.findById(2L).get();
 
         article1.addComment(member1, "댓글1");
         article1.addComment(member1, "댓글2");
+
+        article2.addComment(member1, "댓글3");
+        article2.addComment(member1, "댓글4");
+        article2.addComment(member1, "댓글5");
     }
 }
