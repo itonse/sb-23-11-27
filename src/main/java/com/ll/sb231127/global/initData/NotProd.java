@@ -27,12 +27,13 @@ public class NotProd {
     public ApplicationRunner initNotProdData() {
         return args -> {
             self.work1();  // 자기자신의 프록시를 참조하여 메서드의 @Transactional 이 작동하도록 한다.
-            self.work2();
         };
     }
 
     @Transactional
     public void work1() {
+        if (memberService.count() > 0) return;
+
         Member member1 = memberService.join("user1", "1234").getData();
         Member member2 = memberService.join("user2", "1234").getData();
 
@@ -41,13 +42,6 @@ public class NotProd {
 
         Article article3 = articleService.write(member2.getId(), "제목3", "내용3").getData();
         Article article4 = articleService.write(member2.getId(), "제목4", "내용4").getData();
-    }
-
-    @Transactional
-    public void work2() {
-        Member member1 = memberService.findById(1L).get();
-        Article article1 = articleService.findById(1L).get();
-        Article article2 = articleService.findById(2L).get();
 
         article1.addComment(member1, "댓글1");
         article1.addComment(member1, "댓글2");
