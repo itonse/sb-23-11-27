@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = true)    // 서비스 클래스는 무조건 읽기전용으로 한다.
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ArticleService {
     private final ArticleRepository articleRepository;
@@ -31,8 +31,7 @@ public class ArticleService {
 
         articleRepository.save(article);
 
-        return RsData.of("200", "%d번 게시글이 작성되었습니다."
-                .formatted(article.getId()), article);
+        return RsData.of("200", "%d번 게시글이 작성되었습니다.".formatted(article.getId()), article);
     }
 
     public Optional<Article> findById(long id) {
@@ -49,7 +48,17 @@ public class ArticleService {
         return articleRepository.findByOrderByIdDesc();
     }
 
-    public Page<Article> search(Pageable pageable) {
+    public Page<Article> search(List<String> kwTypes, String kw, Pageable pageable) {
+        if (kwTypes.contains("title") && kwTypes.contains("body")) {
+            return articleRepository.findByTitleContainingOrBodyContaining(kw, kw, pageable);
+        } else if (kwTypes.contains("title") && kwTypes.contains("body")) {
+            return articleRepository.findByTitleContainingOrBodyContaining(kw, kw, pageable);
+        } else if (kwTypes.contains("title")) {
+            return articleRepository.findByTitleContaining(kw, pageable);
+        } else if (kwTypes.contains("body")) {
+            return articleRepository.findByBodyContaining(kw, pageable);
+        }
+
         return articleRepository.findAll(pageable);
     }
 }
