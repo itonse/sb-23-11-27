@@ -111,4 +111,12 @@ public class ArticleServiceTest {
 
         assertThat(tagsStr).isEqualTo("#자바 #백엔드");
     }
+
+    @DisplayName("1번 게시물 toString")
+    @Test
+    void t10() {
+        Article article1 = articleService.findById(1L).get();
+
+        System.out.println(article1);   // Article의 OneToMany에 @ToString.Exclude 을 붙여 ToString 문제 해결
+    }
 }
