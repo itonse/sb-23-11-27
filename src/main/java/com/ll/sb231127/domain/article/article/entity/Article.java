@@ -25,6 +25,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Setter
 @Getter
 @ToString(callSuper = true)   // id 까지 문자열로 나오게 하려면 callSuper true로 설정
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)   // 명시적으로 Include 한 것만 포함된다.
 public class Article extends BaseEntity {
     private String title;
     private String body;
