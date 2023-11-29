@@ -3,6 +3,7 @@ package com.ll.sb231127.domain.article.article.controller;
 import com.ll.sb231127.domain.article.article.entity.Article;
 import com.ll.sb231127.domain.article.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -15,25 +16,37 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/article")
 @RequiredArgsConstructor
+@Slf4j
 public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping("/list")
     public String list(
-            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "kwType", defaultValue = "") List<String> kwTypes,
+            @RequestParam(defaultValue = "0") int page,
             Model model
     ) {
-        List<Sort.Order> sorts = new ArrayList<>();   // 정렬 순서를 지정하기 위한 리스트 생성
-        sorts.add(Sort.Order.desc("id"));   // ID 기준 내림차순 정렬 추가
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("id"));
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
 
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));   // 페이지 요청 정보 생성, 한 페이지당 10개의 항목
+        Map<String, Boolean> kwTypesMap = kwTypes
+                .stream()
+                .collect(Collectors.toMap(
+                        kwType -> kwType,
+                        kwType -> true
+                ));
 
-        Page<Article> itemsPage = articleService.search(pageable);   // 페이지 정보를 기반으로 게시글 검색
-        model.addAttribute("itemsPage", itemsPage);   // 모델에 검색된 페이지 정보 추가
+        log.debug("kwTypesMap: {}", kwTypesMap);
+
+        Page<Article> itemsPage = articleService.search(pageable);
+        model.addAttribute("itemsPage", itemsPage);
 
         return "article/list";
     }
