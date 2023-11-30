@@ -30,12 +30,12 @@ public class ArticleController {
     public String list(
             @RequestParam(value = "kwType", defaultValue = "title,body") List<String> kwTypes,   // 디폴트로 제목과 내용에 체크가 됨
             @RequestParam(defaultValue = "") String kw,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             Model model
     ) {
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("id"));
-        Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(sorts));
 
         Map<String, Boolean> kwTypesMap = kwTypes
                 .stream()

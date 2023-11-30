@@ -77,7 +77,7 @@
 <hr>
 
 <div style="display:flex; gap:10px;">
-    <a th:each="num : ${#numbers.sequence(0, itemsPage.totalPages - 1)}" th:href="|?page=${num}|" th:text="${num}"></a>
+    <a th:each="num : ${#numbers.sequence(1, itemsPage.totalPages)}" th:href="|?page=${num}|" th:text="${num}"></a>
 </div>
 
 <hr>
