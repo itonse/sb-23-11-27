@@ -76,8 +76,12 @@
 
 <hr>
 
-<div th:if="${itemsPage.totalPages > 0}" style="display:flex; gap:10px;">
-    <a th:each="num : ${#numbers.sequence(1, itemsPage.totalPages)}" th:href="|?page=${num}|" th:text="${num}"></a>
+<div
+        th:if="${itemsPage.totalPages > 0}"
+        style="display:flex; gap:10px;"
+        th:with="queryStrBase = 'kwType=title&kwType=body&kw=3'"
+>
+    <a th:each="num : ${#numbers.sequence(1, itemsPage.totalPages)}" th:href="|?${queryStrBase}&page=${num}|" th:text="${num}"></a>
 </div>
 
 <hr>
