@@ -33,7 +33,8 @@
 
 <form onsubmit="submitSearchForm(this); return false;">
     <div style="display:flex; gap:10px;">
-        <label><input type="checkbox" name="kwType" value="authorUsername" th:checked="${kwTypesMap['authorUsername']}"><span>작성자</span></label>
+        <label><input type="checkbox" name="kwType" value="authorUsername"
+                      th:checked="${kwTypesMap['authorUsername']}"><span>작성자</span></label>
         <label><input type="checkbox" name="kwType" value="title"
                       th:checked="${kwTypesMap['title']}"><span>제목</span></label>
         <label><input type="checkbox" name="kwType" value="body"
@@ -42,7 +43,8 @@
                       th:checked="${kwTypesMap['tagContent']}"><span>태그</span></label>
         <label><input type="checkbox" name="kwType" value="commentAuthorUsername"
                       th:checked="${kwTypesMap['commentAuthorUsername']}"><span>댓글 작성자</span></label>
-        <label><input type="checkbox" name="kwType" value="commentBody" th:checked="${kwTypesMap['commentBody']}"><span>댓글 내용</span></label>
+        <label><input type="checkbox" name="kwType" value="commentBody"
+                      th:checked="${kwTypesMap['commentBody']}"><span>댓글 내용</span></label>
     </div>
     <input type="search" name="kw" placeholder="검색어" th:value="${param.kw}">
     <input type="submit" value="검색">
@@ -94,30 +96,32 @@
     >
     </a>
 
-    <a
-            th:href="|?${queryStrBase}&page=${page - pageArmSize - 1}|"
-            th:if="${page - pageArmSize > 2}"
-    >...</a>
+    <th:block th:if="${itemsPage.totalPages > 1}">
+        <a
+                th:href="|?${queryStrBase}&page=${page - pageArmSize - 1}|"
+                th:if="${page - pageArmSize > 2}"
+        >...</a>
 
-    <a
-            th:each="num : ${#numbers.sequence(2, itemsPage.totalPages - 1)}"
-            th:if="${num >= page - pageArmSize and num <= page + pageArmSize}"
-            th:href="|?${queryStrBase}&page=${num}|"
-            th:text="${num}"
-            th:classappend="${num == page ? 'active' : ''}"
-    >
+        <th:block th:if="${itemsPage.totalPages > 2}">
+            <a
+                    th:each="num : ${#numbers.sequence(2, itemsPage.totalPages - 1)}"
+                    th:if="${num >= page - pageArmSize and num <= page + pageArmSize}"
+                    th:href="|?${queryStrBase}&page=${num}|"
+                    th:text="${num}"
+                    th:classappend="${num == page ? 'active' : ''}"
+            ></a>
+        </th:block>
 
-    </a>
+        <a
+                th:href="|?${queryStrBase}&page=${page + pageArmSize + 1}|"
+                th:if="${page + pageArmSize < itemsPage.totalPages - 1}"
+        >...</a>
 
-    <a
-            th:href="|?${queryStrBase}&page=${page + pageArmSize + 1}|"
-            th:if="${page + pageArmSize < itemsPage.totalPages - 1}"
-    >...</a>
-
-    <a th:href="|?${queryStrBase}&page=${itemsPage.totalPages}|"
-       th:classappend="${page == itemsPage.totalPages} ? 'active'"
-       th:text="${itemsPage.totalPages}"
-    ></a>
+        <a th:href="|?${queryStrBase}&page=${itemsPage.totalPages}|"
+           th:classappend="${page == itemsPage.totalPages} ? 'active'"
+           th:text="${itemsPage.totalPages}"
+        ></a>
+    </th:block>
 </div>
 
 <hr>
