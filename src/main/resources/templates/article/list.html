@@ -76,7 +76,7 @@
 
 <hr>
 
-<div style="display:flex; gap:10px;">
+<div th:if="${itemsPage.totalPages > 0}" style="display:flex; gap:10px;">
     <a th:each="num : ${#numbers.sequence(1, itemsPage.totalPages)}" th:href="|?page=${num}|" th:text="${num}"></a>
 </div>
 
