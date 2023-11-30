@@ -27,48 +27,36 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     public Page<Article> search(List<String> kwTypes, String kw, Pageable pageable) {
         BooleanBuilder builder = new BooleanBuilder(); // 조건을 동적으로 구성하기 위한 BooleanBuilder
 
-        // 기존의 조건을 리스트에 담습니다.
-        List<BooleanExpression> conditions = new ArrayList<>();
+        if (!kw.isBlank()) {   // 검색어가 비어있지 않을 때만 조건을 추가
+            List<BooleanExpression> conditions = new ArrayList<>();   // 기존의 조건을 리스트에 담는다.
 
-        if (kwTypes.contains("authorUsername")) {
-            conditions.add(article.author.username.containsIgnoreCase(kw));
-        }
+            // 사용자가 선택한 각 검색 조건에 따라 적절한 BooleanExpression을 리스트에 추가
+            if (kwTypes.contains("authorUsername")) {
+                conditions.add(article.author.username.containsIgnoreCase(kw));
+            }
+            if (kwTypes.contains("title")) {
+                conditions.add(article.title.containsIgnoreCase(kw));
+            }
+            if (kwTypes.contains("body")) {
+                conditions.add(article.body.containsIgnoreCase(kw));
+            }
 
-        if (kwTypes.contains("title")) {
-            conditions.add(article.title.containsIgnoreCase(kw));
-        }
+            // 조건 리스트를 or 조건으로 결합하여 쿼리에 사용할 최종 조건을 생성
+            BooleanExpression combinedCondition = conditions.stream()
+                    .reduce(BooleanExpression::or)
+                    .orElse(null);
 
-        if (kwTypes.contains("body")) {
-            conditions.add(article.body.containsIgnoreCase(kw));
-        }
-
-        if (kwTypes.contains("tagContent")) {
-            conditions.add(article.tags.any().content.eq(kw));
-        }
-
-        if (kwTypes.contains("commentAuthorUsername")) {
-            conditions.add(article.comments.any().author.username.containsIgnoreCase(kw));
-        }
-
-        if (kwTypes.contains("commentBody")) {
-            conditions.add(article.comments.any().body.containsIgnoreCase(kw));
-        }
-
-        // 조건 리스트를 or 조건으로 결합합니다.
-        BooleanExpression combinedCondition = conditions.stream()
-                .reduce(BooleanExpression::or)
-                .orElse(null);
-
-        // 최종적으로 생성된 조건을 쿼리에 적용합니다.
-        if (combinedCondition != null) {
-            builder.and(combinedCondition);
+            // 최종적으로 생성된 조건을 쿼리에 적용
+            if (combinedCondition != null) {
+                builder.and(combinedCondition);
+            }
         }
 
         // QueryDSL을 사용하여 실제 쿼리 구성
         JPAQuery<Article> articlesQuery = jpaQueryFactory
                 .select(article)
                 .from(article)
-                .where(builder);  // 여기서 builder의 조건을 적용
+                .where(builder); // 여기서 builder의 조건을 적용
 
         // 페이지 요청에 따라 정렬 조건을 적용
         for (Sort.Order o : pageable.getSort()) {
@@ -79,13 +67,13 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         // 페이지 요청에 따라 offset(시작점)과 limit(크기)을 설정
         articlesQuery.offset(pageable.getOffset()).limit(pageable.getPageSize());
 
-        // 총 개수를 계산하기 위한 별도의 쿼리 생성.
+        // 총 개수를 계산하기 위한 별도의 쿼리 생성
         JPAQuery<Long> totalQuery = jpaQueryFactory
                 .select(article.count())
                 .from(article)
                 .where(builder);
 
-        // 최종적으로 Page 객체를 생성하여 반환.
+        // 최종적으로 Page 객체를 생성하여 반환
         // articlesQuery.fetch()는 데이터를 로드하고, totalQuery::fetchOne은 전체 개수를 계산
         return PageableExecutionUtils.getPage(articlesQuery.fetch(), pageable, totalQuery::fetchOne);
     }
