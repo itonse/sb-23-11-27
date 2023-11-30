@@ -28,7 +28,7 @@ public class ArticleController {
 
     @GetMapping("/list")
     public String list(
-            @RequestParam(value = "kwType", defaultValue = "") List<String> kwTypes,
+            @RequestParam(value = "kwType", defaultValue = "title,body") List<String> kwTypes,   // 디폴트로 제목과 내용에 체크가 됨
             @RequestParam(defaultValue = "") String kw,
             @RequestParam(defaultValue = "0") int page,
             Model model
