@@ -1,6 +1,9 @@
 package com.ll.sb231127.domain.article.article.repository;
 
 import com.ll.sb231127.domain.article.article.entity.Article;
+import com.ll.sb231127.domain.article.articleComment.entity.QArticleComment;
+import com.ll.sb231127.domain.article.articleTag.entity.QArticleTag;
+import com.ll.sb231127.domain.member.member.entity.QMember;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -27,12 +30,17 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     public Page<Article> search(List<String> kwTypes, String kw, Pageable pageable) {
         BooleanBuilder builder = new BooleanBuilder(); // 조건을 동적으로 구성하기 위한 BooleanBuilder
 
+        QMember author = new QMember("articleAuthor");
+        QArticleTag articleTag = new QArticleTag("articleTag");
+        QArticleComment comment = new QArticleComment("articleComment");
+        QMember commentAuthor = new QMember("articleCommentAuthor");
+
         if (!kw.isBlank()) {
             // 기존의 조건을 리스트에 담습니다.
             List<BooleanExpression> conditions = new ArrayList<>();
 
             if (kwTypes.contains("authorUsername")) {
-                conditions.add(article.author.username.containsIgnoreCase(kw));
+                conditions.add(author.username.containsIgnoreCase(kw));
             }
 
             if (kwTypes.contains("title")) {
@@ -44,15 +52,15 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
             }
 
             if (kwTypes.contains("tagContent")) {
-                conditions.add(article.tags.any().content.eq(kw));
+                conditions.add(articleTag.content.eq(kw));
             }
 
             if (kwTypes.contains("commentAuthorUsername")) {
-                conditions.add(article.comments.any().author.username.containsIgnoreCase(kw));
+                conditions.add(commentAuthor.username.containsIgnoreCase(kw));
             }
 
             if (kwTypes.contains("commentBody")) {
-                conditions.add(article.comments.any().body.containsIgnoreCase(kw));
+                conditions.add(comment.body.containsIgnoreCase(kw));
             }
 
             // 조건 리스트를 or 조건으로 결합합니다.
@@ -68,8 +76,12 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
         // QueryDSL을 사용하여 실제 쿼리 구성
         JPAQuery<Article> articlesQuery = jpaQueryFactory
-                .select(article)
+                .selectDistinct(article)
                 .from(article)
+                .leftJoin(article.author, author)
+                .leftJoin(article.comments, comment)
+                .leftJoin(comment.author, commentAuthor)
+                .leftJoin(article.tags, articleTag)
                 .where(builder);  // 여기서 builder의 조건을 적용
 
         // 페이지 요청에 따라 정렬 조건을 적용
@@ -83,8 +95,12 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
         // 총 개수를 계산하기 위한 별도의 쿼리 생성.
         JPAQuery<Long> totalQuery = jpaQueryFactory
-                .select(article.count())
+                .select(article.countDistinct())
                 .from(article)
+                .leftJoin(article.author, author)
+                .leftJoin(article.comments, comment)
+                .leftJoin(comment.author, commentAuthor)
+                .leftJoin(article.tags, articleTag)
                 .where(builder);
 
         // 최종적으로 Page 객체를 생성하여 반환.
